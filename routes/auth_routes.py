@@ -7,6 +7,8 @@ def auth_routes(app, db, bcrypt):
     
     @app.route('/')
     def home():
+        if not current_user.is_authenticated:
+            return render_template('home.html')
         recent_results = Result.query.filter_by(user_id=current_user.id).order_by(Result.date.desc()).limit(5).all()
         return render_template('home.html', results=recent_results)
     
