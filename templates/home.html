@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+{% block title %}Home - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+  <h1 class="display-4">Welcome to Quiz Master!</h1>
+  <p class="lead">Test your knowledge across multiple categories.</p>
+  <a href="{{ url_for('quiz') }}" class="btn btn-success btn-lg mt-3">Start Quiz</a>
+</div>
+
+{% if results %}
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Your Recent Quiz Attempts</h5>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Score</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for result in results %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ result.score }}</td>
+              <td>{{ result.date.strftime('%b %d, %Y %I:%M %p') }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-info text-center mt-4">You haven’t taken any quizzes yet.</div>
+{% endif %}
+{% endblock %}

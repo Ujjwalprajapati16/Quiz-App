@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required
 import os
 from sqlalchemy import MetaData,func
 
@@ -45,7 +45,11 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-
+    
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        flash('You need to login first.', 'warning')
+        return redirect(url_for('login'))
 
     # routes
     from routes.auth_routes import auth_routes
