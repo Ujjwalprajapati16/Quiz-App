@@ -2,29 +2,68 @@
 {% block title %}Add Question - Quiz Master{% endblock %}
 
 {% block content %}
-<h2 class="mb-4 text-center">Contribute a New Question</h2>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center text-primary">Contribute a New Question</h2>
 
-<form method="POST" action="{{ url_for('add_question') }}">
-  <div class="mb-3">
-    <label for="question" class="form-label">Question</label>
-    <textarea class="form-control" id="question" name="question" rows="2" required></textarea>
-  </div>
+  <form method="POST" action="{{ url_for('add_question') }}">
+    <!-- Question Input -->
+    <div class="mb-3">
+      <label for="question" class="form-label">Question</label>
+      <textarea class="form-control" id="question" name="question" rows="3" placeholder="Type your question here..." required></textarea>
+    </div>
 
-  <div class="mb-3">
-    <label class="form-label">Options</label>
-    <input type="text" class="form-control mb-2" name="option1" placeholder="Option 1" required>
-    <input type="text" class="form-control mb-2" name="option2" placeholder="Option 2" required>
-    <input type="text" class="form-control mb-2" name="option3" placeholder="Option 3" required>
-    <input type="text" class="form-control mb-2" name="option4" placeholder="Option 4" required>
-  </div>
+    <!-- Options Input -->
+    <div class="mb-3">
+      <label class="form-label">Options</label>
+      <div class="input-group mb-2">
+        <span class="input-group-text">1</span>
+        <input type="text" class="form-control" name="option1" placeholder="Option 1" required>
+      </div>
+      <div class="input-group mb-2">
+        <span class="input-group-text">2</span>
+        <input type="text" class="form-control" name="option2" placeholder="Option 2" required>
+      </div>
+      <div class="input-group mb-2">
+        <span class="input-group-text">3</span>
+        <input type="text" class="form-control" name="option3" placeholder="Option 3" required>
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">4</span>
+        <input type="text" class="form-control" name="option4" placeholder="Option 4" required>
+      </div>
+    </div>
 
-  <div class="mb-3">
-    <label for="answer" class="form-label">Correct Answer</label>
-    <input type="text" class="form-control" name="answer" id="answer" placeholder="Must match one of the options above" required>
-  </div>
+    <!-- Select Correct Answer -->
+    <div class="mb-3">
+      <label for="answer" class="form-label">Correct Answer</label>
+      <select class="form-select" name="answer" id="answer" required>
+        <option value="" disabled selected>Select the correct answer</option>
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+      </select>
+      <small class="text-muted mt-1">Select the option number that corresponds to the correct answer.</small>
+    </div>
 
-  <div class="text-center">
-    <button type="submit" class="btn btn-primary">Submit Question</button>
-  </div>
-</form>
+    <!-- Submit Button -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary btn-lg mt-3 px-4 py-2 hover-shadow-lg">Submit Question</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // Optional: Add JS for input validation or other features
+    document.querySelector("form").addEventListener("submit", function(e) {
+      var question = document.getElementById("question").value.trim();
+      if (!question) {
+        e.preventDefault();
+        alert("Please provide a valid question.");
+      }
+    });
+  </script>
 {% endblock %}

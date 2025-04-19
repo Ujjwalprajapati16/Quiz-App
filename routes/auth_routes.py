@@ -8,9 +8,31 @@ def auth_routes(app, db, bcrypt):
     @app.route('/')
     def home():
         if not current_user.is_authenticated:
-            return render_template('home.html')
-        recent_results = Result.query.filter_by(user_id=current_user.id).order_by(Result.date.desc()).limit(5).all()
-        return render_template('home.html', results=recent_results)
+            # Get the leaderboard (top users)
+            leaderboard = db.session.query(User.name, db.func.max(Result.score).label('max_score'))\
+                .join(Result, Result.user_id == User.id)\
+                .group_by(User.id)\
+                .order_by(db.desc('max_score'))\
+                .limit(5).all()
+            return render_template('home.html', leaderboard=leaderboard)
+        # Get the latest quiz results for the logged-in user
+        results = Result.query.filter_by(user_id=current_user.id).order_by(Result.date.desc()).limit(5).all()
+
+        # Get the leaderboard (top users)
+        leaderboard = db.session.query(User.name, db.func.max(Result.score).label('max_score'))\
+            .join(Result, Result.user_id == User.id)\
+            .group_by(User.id)\
+            .order_by(db.desc('max_score'))\
+            .limit(5).all()
+
+        # Calculate user progress
+        completed_quizzes = len(results)
+        average_score = round(sum([r.score for r in results]) / completed_quizzes, 2) if completed_quizzes > 0 else 0
+        best_score = max([r.score for r in results], default=0)
+
+        return render_template('home.html', results=results, leaderboard=leaderboard, 
+                            completed_quizzes=completed_quizzes, average_score=average_score, best_score=best_score)
+
     
     @app.route('/login', methods=['GET', 'POST'])
     def login():

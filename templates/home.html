@@ -3,38 +3,127 @@
 
 {% block content %}
 <div class="text-center mb-4">
-  <h1 class="display-4">Welcome to Quiz Master!</h1>
-  <p class="lead">Test your knowledge across multiple categories.</p>
-  <a href="{{ url_for('quiz') }}" class="btn btn-success btn-lg mt-3">Start Quiz</a>
+  <h1 class="display-4 text-primary">Welcome to Quiz Master, {{ current_user.name }}!</h1>
+  <p class="lead">Test your knowledge across multiple categories and challenge yourself to achieve better scores!</p>
+  <a href="{{ url_for('quiz') }}" class="btn btn-success btn-lg mt-3 shadow-lg animate__animated animate__bounceIn">Start Quiz</a>
 </div>
 
-{% if results %}
-  <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">Your Recent Quiz Attempts</h5>
+<!-- Display User Quiz Progress -->
+{% if current_user.is_authenticated %}
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-6">
+      <div class="card shadow-lg mb-4 animate__animated animate__fadeInUp" data-aos="fade-up">
+        <div class="card-header bg-warning text-white">
+          <h5 class="mb-0">Your Quiz Progress</h5>
+        </div>
+        <div class="card-body text-center">
+          <h6><strong>Completed Quizzes:</strong> {{ completed_quizzes }}</h6>
+          <h6><strong>Average Score:</strong> {{ average_score }}%</h6>
+          <h6><strong>Best Score:</strong> {{ best_score }}%</h6>
+        </div>
+      </div>
     </div>
-    <div class="card-body p-0">
-      <table class="table table-hover mb-0">
-        <thead class="table-light">
-          <tr>
-            <th>#</th>
-            <th>Score</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for result in results %}
-            <tr>
-              <td>{{ loop.index }}</td>
-              <td>{{ result.score }}</td>
-              <td>{{ result.date.strftime('%b %d, %Y %I:%M %p') }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  </div>
+{% endif %}
+
+<!-- Display Recent Quiz Results -->
+{% if results %}
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h3 class="text-center mb-4">Your Recent Quiz Attempts</h3>
+      <div class="row">
+        {% for result in results %}
+          <div class="col-sm-6 col-md-4 mb-4">
+            <div class="card shadow-sm border-light rounded-3 animate__animated animate__zoomIn" data-aos="zoom-in">
+              <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Attempt #{{ loop.index }}</h5>
+              </div>
+              <div class="card-body text-center">
+                <p><strong>Score:</strong> {{ result.score }} / 10</p>
+                <p><strong>Date:</strong> {{ result.date.strftime('%b %d, %Y %I:%M %p') }}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 {% else %}
-  <div class="alert alert-info text-center mt-4">You haven’t taken any quizzes yet.</div>
+  <div class="alert alert-info text-center mt-4 animate__animated animate__fadeInUp">You haven’t taken any quizzes yet. Get started by taking a quiz!</div>
 {% endif %}
+
+<!-- Display Leaderboard -->
+<div class="row justify-content-center mt-5">
+  <div class="col-lg-8">
+    <div class="card shadow-lg">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Leaderboard</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in leaderboard %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.max_score * 10 }}%</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Categories Section -->
+<div class="row justify-content-center mt-5">
+  <div class="col-lg-8">
+    <h3 class="text-center mb-4">Explore Quiz Categories</h3>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <a href="{{ url_for('quiz') }}" class="card shadow-lg text-decoration-none hover-shadow-lg">
+          <div class="card-body text-center">
+            <h5 class="card-title text-success">Programming</h5>
+            <p class="card-text">Test your programming knowledge with quizzes on various languages.</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4 mb-3">
+        <a href="{{ url_for('quiz') }}" class="card shadow-lg text-decoration-none hover-shadow-lg">
+          <div class="card-body text-center">
+            <h5 class="card-title text-info">Data Science</h5>
+            <p class="card-text">Show your expertise in data analysis, machine learning, and statistics.</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4 mb-3">
+        <a href="{{ url_for('quiz') }}" class="card shadow-lg text-decoration-none hover-shadow-lg">
+          <div class="card-body text-center">
+            <h5 class="card-title text-danger">General Knowledge</h5>
+            <p class="card-text">Challenge yourself with quizzes across various general knowledge topics.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  </script>
 {% endblock %}
